@@ -65,11 +65,6 @@ li {
     margin-bottom: 10px;
 }
 
-.line-number {
-    color: #888;
-    font-size: 0.9em;
-}
-
 @media (max-width: 768px) {
     body {
         padding: 10px;
@@ -106,15 +101,15 @@ li {
     border-radius: 6px;
     overflow: hidden;
     background-color: #f6f8fa;
+    margin-bottom: 1rem;
 }
 
-.function-doc,
-.method-doc {
-    padding: 1em;
+.doc {
+    padding: 1rem;
     margin: 0;
     border-bottom: 1px solid #e1e4e8;
     white-space: pre-wrap;
-    background-color: #ffffff;
+    background-color: #f6f8fa;
 }
 
 .function-code,
@@ -240,4 +235,13 @@ li {
     margin: 0;
     padding: 1rem;
     overflow-x: auto;
+}
+
+pre[class*="language-"] {
+    margin: 0;
+    border-radius: 0;
+}
+
+.line-numbers .line-numbers-rows {
+    border-right: 1px solid #ddd;
 }

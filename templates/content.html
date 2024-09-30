@@ -29,7 +29,7 @@
       {{if .File.FileDoc}}
       <section class="section" aria-labelledby="file-doc">
         <h2 id="file-doc">File Documentation</h2>
-        <pre class="code-block">{{.File.FileDoc}}</pre>
+        <pre class="line-numbers"><code class="language-go">{{.File.FileDoc}}</code></pre>
       </section>
       {{end}}
 
@@ -38,7 +38,9 @@
         <h2 id="imports">Imports</h2>
         <ul class="list-unstyled">
         {{range .File.Imports}}
-          {{template "import" .}}
+          <li>
+            <pre class="line-numbers"><code class="language-go">import {{.Path}}</code></pre>
+          </li>
         {{end}}
         </ul>
       </section>
@@ -49,7 +51,10 @@
         <h2 id="constants">Constants</h2>
         <ul class="list-unstyled">
         {{range .File.Constants}}
-          {{template "constant" .}}
+          <li>
+            {{if .Doc }}<pre class="doc">{{.Doc}}</pre>{{end}}
+            <pre class="line-numbers"><code class="language-go">const {{.Name}}{{ if .Type}}: {{.Type}}{{end}} {{ if .Value}}= {{.Value}}{{end}}</code></pre>
+          </li>
         {{end}}
         </ul>
       </section>
@@ -60,7 +65,10 @@
         <h2 id="variables">Variables</h2>
         <ul class="list-unstyled">
         {{range .File.Variables}}
-          {{template "variable" .}}
+          <li>
+            {{if .Doc }}<pre class="doc">{{.Doc}}</pre>{{end}}
+            <pre class="line-numbers"><code class="language-go">var {{.Name}}{{ if .Type}}: {{.Type}}{{end}} {{ if .Value}}= {{.Value}}{{end}}</code></pre>
+          </li>
         {{end}}
         </ul>
       </section>
@@ -71,7 +79,10 @@
         <h2 id="types">Types</h2>
         <ul class="list-unstyled">
         {{range .File.Types}}
-          {{template "type" .}}
+          <li>
+            {{if .Doc }}<pre class="doc">{{.Doc}}</pre>{{end}}
+            <pre class="line-numbers"><code class="language-go">type {{.Name}} {{.Def}}</code></pre>
+          </li>
         {{end}}
         </ul>
       </section>
@@ -82,7 +93,12 @@
         <h2 id="functions">Functions</h2>
         <ul class="list-unstyled">
         {{range .File.Functions}}
-          {{template "function" .}}
+          <li class="function-item">
+            <div class="function-box">
+              <pre class="doc">{{.Doc}}</pre>
+              <pre class="line-numbers"><code class="language-go">func {{.Name}}({{.Parameters}}) {{.ReturnType}} {{.Body}}</code></pre>
+            </div>
+          </li>
         {{end}}
         </ul>
       </section>
@@ -93,7 +109,10 @@
         <h2 id="methods">Methods</h2>
         <ul class="list-unstyled">
         {{range .File.Methods}}
-          {{template "method" .}}
+          <li>
+            <pre class="doc">{{.Doc}}</pre>
+            <pre class="line-numbers"><code class="language-go">func ({{.Receiver}}) {{.Name}}({{.Parameters}}) {{.ReturnType}} {{.Body}}</code></pre>
+          </li>
         {{end}}
         </ul>
       </section>
@@ -104,7 +123,16 @@
         <h2 id="interfaces">Interfaces</h2>
         <ul class="list-unstyled">
         {{range .File.Interfaces}}
-          {{template "interface" .}}
+          <li>
+            <pre class="doc">{{.Doc}}</pre>
+            <code class="language-go">
+                type {{.Name}} interface {
+                {{range .Methods}}
+                    {{.Name}}({{.Parameters}}) {{.ReturnType}}
+                {{end}}
+                }
+            </code>
+          </li>
         {{end}}
         </ul>
       </section>
@@ -115,7 +143,9 @@
         <h2 id="comments">Comments</h2>
         <ul class="list-unstyled">
         {{range .File.Comments}}
-          {{template "comment" .}}
+          <li>
+            <pre class="line-numbers"><code class="language-go">{{.Text}}</code></pre>
+          </li>
         {{end}}
         </ul>
       </section>
@@ -123,10 +153,10 @@
 
       {{if .File.Content}}
       <section class="section" aria-labelledby="full-content">
-        <h2 id="full-content">Full File Content</h2>
+        <h2 id="full-content">Full Code</h2>
         <details class="file-content-details">
-          <summary>Click to view full file content</summary>
-          <pre class="code-block"><code>{{.File.Content}}</code></pre>
+          <summary>Click to view full file code</summary>
+          <pre class="line-numbers"><code class="language-go">{{.File.Content}}</code></pre>
         </details>
       </section>
       {{end}}
