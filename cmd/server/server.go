@@ -17,11 +17,11 @@ func Serve() error {
 
 	mux := http.NewServeMux()
 
-	// Serve static files
+	// Static file server
 	fs := http.FileServer(http.Dir("static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	// Content handler
+	// Content handler - This should handle all paths under /science/
 	mux.HandleFunc("/science/", handlers.ContentHandler)
 
 	// Home page
@@ -30,6 +30,6 @@ func Serve() error {
 	// Wrap the mux with logging middleware
 	loggingMux := middleware.Logging(mux)
 
-	logger.InfoLogger.Printf("Server starting on port %s", port)
+	logger.InfoLogger.Printf("Server starting at http://localhost:%s/", port)
 	return http.ListenAndServe(":"+port, loggingMux)
 }

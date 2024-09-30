@@ -1,103 +1,136 @@
-{{template "base" .}}
+{{ template "base" . }}
 
 {{define "title"}}{{.Package}} - SAC{{end}}
 
 {{define "content"}}
-<h1>Package: {{.Package}}</h1>
+<main role="main" class="container">
+  <div class="row">
+    <div class="col-md-3">
+      <nav class="section-nav sticky-top" role="navigation" aria-label="Page sections">
+        <ul class="nav flex-column">
+          {{if .File.FileDoc}}<li class="nav-item"><a class="nav-link" href="#file-doc">File Documentation</a></li>{{end}}
+          {{if .File.Imports}}<li class="nav-item"><a class="nav-link" href="#imports">Imports</a></li>{{end}}
+          {{if .File.Constants}}<li class="nav-item"><a class="nav-link" href="#constants">Constants</a></li>{{end}}
+          {{if .File.Variables}}<li class="nav-item"><a class="nav-link" href="#variables">Variables</a></li>{{end}}
+          {{if .File.Types}}<li class="nav-item"><a class="nav-link" href="#types">Types</a></li>{{end}}
+          {{if .File.Functions}}<li class="nav-item"><a class="nav-link" href="#functions">Functions</a></li>{{end}}
+          {{if .File.Methods}}<li class="nav-item"><a class="nav-link" href="#methods">Methods</a></li>{{end}}
+          {{if .File.Interfaces}}<li class="nav-item"><a class="nav-link" href="#interfaces">Interfaces</a></li>{{end}}
+          {{if .File.Comments}}<li class="nav-item"><a class="nav-link" href="#comments">Comments</a></li>{{end}}
+        </ul>
+      </nav>
+    </div>
+    <div class="col-md-9">
+      <div class="package-header">
+        <h1>Package: {{.Package}}</h1>
+        <p class="nested-path">{{.NestedPath}}</p>
+      </div>
 
-{{if .FileDoc}}
-<div class="section">
-    <h2>File Documentation</h2>
-    <pre>{{.FileDoc}}</pre>
-</div>
-{{end}}
+      {{if .File.FileDoc}}
+      <section class="section" aria-labelledby="file-doc">
+        <h2 id="file-doc">File Documentation</h2>
+        <pre class="code-block">{{.File.FileDoc}}</pre>
+      </section>
+      {{end}}
 
-{{if .Imports}}
-<div class="section">
-    <h2>Imports</h2>
-    <ul>
-    {{range .Imports}}
-        {{template "import" .}}
-    {{end}}
-    </ul>
-</div>
-{{end}}
+      {{if .File.Imports}}
+      <section class="section" aria-labelledby="imports">
+        <h2 id="imports">Imports</h2>
+        <ul class="list-unstyled">
+        {{range .File.Imports}}
+          {{template "import" .}}
+        {{end}}
+        </ul>
+      </section>
+      {{end}}
 
-{{if .Constants}}
-<div class="section">
-    <h2>Constants</h2>
-    <ul>
-    {{range .Constants}}
-        {{template "constant" .}}
-    {{end}}
-    </ul>
-</div>
-{{end}}
+      {{if .File.Constants}}
+      <section class="section" aria-labelledby="constants">
+        <h2 id="constants">Constants</h2>
+        <ul class="list-unstyled">
+        {{range .File.Constants}}
+          {{template "constant" .}}
+        {{end}}
+        </ul>
+      </section>
+      {{end}}
 
-{{if .Variables}}
-<div class="section">
-    <h2>Variables</h2>
-    <ul>
-    {{range .Variables}}
-        {{template "variable" .}}
-    {{end}}
-    </ul>
-</div>
-{{end}}
+      {{if .File.Variables}}
+      <section class="section" aria-labelledby="variables">
+        <h2 id="variables">Variables</h2>
+        <ul class="list-unstyled">
+        {{range .File.Variables}}
+          {{template "variable" .}}
+        {{end}}
+        </ul>
+      </section>
+      {{end}}
 
-{{if .Types}}
-<div class="section">
-    <h2>Types</h2>
-    <ul>
-    {{range .Types}}
-        {{template "type" .}}
-    {{end}}
-    </ul>
-</div>
-{{end}}
+      {{if .File.Types}}
+      <section class="section" aria-labelledby="types">
+        <h2 id="types">Types</h2>
+        <ul class="list-unstyled">
+        {{range .File.Types}}
+          {{template "type" .}}
+        {{end}}
+        </ul>
+      </section>
+      {{end}}
 
-{{if .Functions}}
-<div class="section">
-    <h2>Functions</h2>
-    <ul>
-    {{range .Functions}}
-        {{template "function" .}}
-    {{end}}
-    </ul>
-</div>
-{{end}}
+      {{if .File.Functions}}
+      <section class="section" aria-labelledby="functions">
+        <h2 id="functions">Functions</h2>
+        <ul class="list-unstyled">
+        {{range .File.Functions}}
+          {{template "function" .}}
+        {{end}}
+        </ul>
+      </section>
+      {{end}}
 
-{{if .Methods}}
-<div class="section">
-    <h2>Methods</h2>
-    <ul>
-    {{range .Methods}}
-        {{template "method" .}}
-    {{end}}
-    </ul>
-</div>
-{{end}}
+      {{if .File.Methods}}
+      <section class="section" aria-labelledby="methods">
+        <h2 id="methods">Methods</h2>
+        <ul class="list-unstyled">
+        {{range .File.Methods}}
+          {{template "method" .}}
+        {{end}}
+        </ul>
+      </section>
+      {{end}}
 
-{{if .Interfaces}}
-<div class="section">
-    <h2>Interfaces</h2>
-    <ul>
-    {{range .Interfaces}}
-        {{template "interface" .}}
-    {{end}}
-    </ul>
-</div>
-{{end}}
+      {{if .File.Interfaces}}
+      <section class="section" aria-labelledby="interfaces">
+        <h2 id="interfaces">Interfaces</h2>
+        <ul class="list-unstyled">
+        {{range .File.Interfaces}}
+          {{template "interface" .}}
+        {{end}}
+        </ul>
+      </section>
+      {{end}}
 
-{{if .Comments}}
-<div class="section">
-    <h2>Comments</h2>
-    <ul>
-    {{range .Comments}}
-        {{template "comment" .}}
-    {{end}}
-    </ul>
-</div>
-{{end}}
+      {{if .File.Comments}}
+      <section class="section" aria-labelledby="comments">
+        <h2 id="comments">Comments</h2>
+        <ul class="list-unstyled">
+        {{range .File.Comments}}
+          {{template "comment" .}}
+        {{end}}
+        </ul>
+      </section>
+      {{end}}
 
+      {{if .File.Content}}
+      <section class="section" aria-labelledby="full-content">
+        <h2 id="full-content">Full File Content</h2>
+        <details class="file-content-details">
+          <summary>Click to view full file content</summary>
+          <pre class="code-block"><code>{{.File.Content}}</code></pre>
+        </details>
+      </section>
+      {{end}}
+    </div>
+  </div>
+</main>
 {{end}}
