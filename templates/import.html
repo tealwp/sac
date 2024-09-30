@@ -1,0 +1,6 @@
+{{define "import"}}
+<li>
+    {{if .Name}}{{.Name}} {{end}}{{.Path}}
+    <span class="line-number">(Line: {{.Line}})</span>
+</li>
+{{end}}

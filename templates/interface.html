@@ -1,0 +1,19 @@
+{{define "interface"}}
+<li>
+    <strong>{{.Name}}</strong>
+    {{if .Doc}}<pre>{{.Doc}}</pre>{{end}}
+    {{if .Methods}}
+    <ul>
+        {{range .Methods}}
+        <li>{{.Name}}(
+            {{range $i, $param := .Parameters}}
+                {{if $i}}, {{end}}{{.Type}}
+            {{end}}) {{.ReturnType}}
+            <span class="line-number">(Line: {{.Line}})</span>
+        </li>
+        {{end}}
+    </ul>
+    {{end}}
+    <span class="line-number">(Line: {{.Line}})</span>
+</li>
+{{end}}

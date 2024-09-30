@@ -1,0 +1,103 @@
+{{template "base" .}}
+
+{{define "title"}}{{.Package}} - SAC{{end}}
+
+{{define "content"}}
+<h1>Package: {{.Package}}</h1>
+
+{{if .FileDoc}}
+<div class="section">
+    <h2>File Documentation</h2>
+    <pre>{{.FileDoc}}</pre>
+</div>
+{{end}}
+
+{{if .Imports}}
+<div class="section">
+    <h2>Imports</h2>
+    <ul>
+    {{range .Imports}}
+        {{template "import" .}}
+    {{end}}
+    </ul>
+</div>
+{{end}}
+
+{{if .Constants}}
+<div class="section">
+    <h2>Constants</h2>
+    <ul>
+    {{range .Constants}}
+        {{template "constant" .}}
+    {{end}}
+    </ul>
+</div>
+{{end}}
+
+{{if .Variables}}
+<div class="section">
+    <h2>Variables</h2>
+    <ul>
+    {{range .Variables}}
+        {{template "variable" .}}
+    {{end}}
+    </ul>
+</div>
+{{end}}
+
+{{if .Types}}
+<div class="section">
+    <h2>Types</h2>
+    <ul>
+    {{range .Types}}
+        {{template "type" .}}
+    {{end}}
+    </ul>
+</div>
+{{end}}
+
+{{if .Functions}}
+<div class="section">
+    <h2>Functions</h2>
+    <ul>
+    {{range .Functions}}
+        {{template "function" .}}
+    {{end}}
+    </ul>
+</div>
+{{end}}
+
+{{if .Methods}}
+<div class="section">
+    <h2>Methods</h2>
+    <ul>
+    {{range .Methods}}
+        {{template "method" .}}
+    {{end}}
+    </ul>
+</div>
+{{end}}
+
+{{if .Interfaces}}
+<div class="section">
+    <h2>Interfaces</h2>
+    <ul>
+    {{range .Interfaces}}
+        {{template "interface" .}}
+    {{end}}
+    </ul>
+</div>
+{{end}}
+
+{{if .Comments}}
+<div class="section">
+    <h2>Comments</h2>
+    <ul>
+    {{range .Comments}}
+        {{template "comment" .}}
+    {{end}}
+    </ul>
+</div>
+{{end}}
+
+{{end}}

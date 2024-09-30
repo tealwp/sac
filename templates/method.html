@@ -1,0 +1,11 @@
+{{define "method"}}
+<li>
+    <strong>{{.Receiver}} {{.Name}}</strong>(
+    {{range $i, $param := .Parameters}}
+        {{if $i}}, {{end}}{{.Name}} {{.Type}}
+    {{end}}) {{.ReturnType}}
+    {{if .Doc}}<pre>{{.Doc}}</pre>{{end}}
+    <pre>{{.Body}}</pre>
+    <span class="line-number">(Line: {{.Line}})</span>
+</li>
+{{end}}
