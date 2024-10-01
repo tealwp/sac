@@ -1,0 +1,664 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>server: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/tealwp/sac/cmd/server/server.go (0.0%)</option>
+				
+				<option value="file1">github.com/tealwp/sac/internal/handlers/content.go (0.0%)</option>
+				
+				<option value="file2">github.com/tealwp/sac/internal/handlers/home.go (0.0%)</option>
+				
+				<option value="file3">github.com/tealwp/sac/internal/logger/logger.go (0.0%)</option>
+				
+				<option value="file4">github.com/tealwp/sac/internal/middleware/middleware.go (0.0%)</option>
+				
+				<option value="file5">github.com/tealwp/sac/internal/parser/parser.go (0.0%)</option>
+				
+				<option value="file6">github.com/tealwp/sac/main.go (0.0%)</option>
+				
+				<option value="file7">github.com/tealwp/sac/static/content/science/chemistry/atomic_structure/atom.go (0.0%)</option>
+				
+				<option value="file8">github.com/tealwp/sac/static/content/science/chemistry/atomic_structure/electron_configuration.go (0.0%)</option>
+				
+				<option value="file9">github.com/tealwp/sac/static/content/science/chemistry/chemical_bonding/bonding.go (0.0%)</option>
+				
+				<option value="file10">github.com/tealwp/sac/static/content/science/chemistry/chemical_bonding/geometry.go (0.0%)</option>
+				
+				<option value="file11">github.com/tealwp/sac/static/content/science/chemistry/chemical_reactions/reactions.go (0.0%)</option>
+				
+				<option value="file12">github.com/tealwp/sac/static/content/science/earth_science/hydrology/watercycle.go (0.0%)</option>
+				
+				<option value="file13">github.com/tealwp/sac/static/content/science/testsubject/testsubject.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package server
+
+import (
+        "net/http"
+        "os"
+
+        "github.com/tealwp/sac/internal/handlers"
+        "github.com/tealwp/sac/internal/logger"
+        "github.com/tealwp/sac/internal/middleware"
+)
+
+func Serve() error <span class="cov0" title="0">{
+        port := os.Getenv("PORT")
+        if port == "" </span><span class="cov0" title="0">{
+                port = "8080"
+        }</span>
+
+        <span class="cov0" title="0">mux := http.NewServeMux()
+
+        // Static file server
+        fs := http.FileServer(http.Dir("static"))
+        mux.Handle("/static/", http.StripPrefix("/static/", fs))
+
+        // Content handler - This should handle all paths under /science/
+        mux.HandleFunc("/science/", handlers.ContentHandler)
+
+        // Home page
+        mux.HandleFunc("/", handlers.HomeHandler)
+
+        // Wrap the mux with logging middleware
+        loggingMux := middleware.Logging(mux)
+
+        logger.InfoLogger.Printf("Server starting at http://localhost:%s/", port)
+        return http.ListenAndServe(":"+port, loggingMux)</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package handlers
+
+import (
+        "html/template"
+        "net/http"
+        "os"
+        "path"
+        "path/filepath"
+        "strings"
+
+        "github.com/tealwp/gofileparser"
+        "github.com/tealwp/sac/internal/logger"
+        "github.com/tealwp/sac/internal/parser"
+)
+
+var contentTmpl *template.Template
+
+func init() <span class="cov0" title="0">{
+        var err error
+        contentTmpl, err = template.ParseFiles("templates/base.html", "templates/content.html", "templates/import.html", "templates/constant.html", "templates/variable.html", "templates/type.html", "templates/function.html", "templates/method.html", "templates/interface.html", "templates/comment.html")
+        if err != nil </span><span class="cov0" title="0">{
+                logger.ErrorLogger.Fatalf("Failed to parse content template: %v", err)
+        }</span>
+        <span class="cov0" title="0">logger.DebugLogger.Println("Content template parsed successfully")</span>
+}
+
+func ContentHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        logger.DebugLogger.Printf("ContentHandler called with path: %s", r.URL.Path)
+
+        // Remove the "/science/" prefix
+        urlPath := strings.TrimPrefix(r.URL.Path, "/science/")
+
+        // Construct the file path using forward slashes
+        filePath := path.Join("static", "content", "science", urlPath+".go")
+
+        // Convert to OS-specific path
+        osFilePath := filepath.FromSlash(filePath)
+
+        logger.DebugLogger.Printf("Attempting to read file: %s", osFilePath)
+
+        // Check if the file exists
+        if _, err := os.Stat(osFilePath); os.IsNotExist(err) </span><span class="cov0" title="0">{
+                logger.ErrorLogger.Printf("File not found: %s", osFilePath)
+                http.Error(w, "404 Not Found", http.StatusNotFound)
+                return
+        }</span>
+
+        // Extract the nested path
+        <span class="cov0" title="0">pathParts := strings.Split(urlPath, "/")
+        nestedPath := strings.Join(reverseSlice(pathParts[:len(pathParts)-1]), " &lt; ")
+
+        parsedFile, err := parser.ParseGoFile(osFilePath)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.ErrorLogger.Printf("Error parsing file: %v", err)
+                http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+                return
+        }</span>
+        <span class="cov0" title="0">logger.InfoLogger.Printf("File parsed successfully: %s", osFilePath)
+
+        // Create a struct to hold both the parsed file and the nested path
+        data := struct {
+                File       *gofileparser.GFP_GoFile
+                NestedPath string
+                Package    string
+        }{
+                File:       parsedFile,
+                NestedPath: nestedPath,
+                Package:    parsedFile.Package, // Assuming the package name is stored in a 'Package' field
+        }
+
+        w.Header().Set("Content-Type", "text/html")
+        if err := contentTmpl.ExecuteTemplate(w, "base", data); err != nil </span><span class="cov0" title="0">{
+                logger.ErrorLogger.Printf("Error executing template: %v", err)
+                http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+                return
+        }</span>
+        <span class="cov0" title="0">logger.InfoLogger.Printf("Template executed successfully")</span>
+}
+
+// Helper function to reverse a slice of strings
+func reverseSlice(s []string) []string <span class="cov0" title="0">{
+        for i, j := 0, len(s)-1; i &lt; j; i, j = i+1, j-1 </span><span class="cov0" title="0">{
+                s[i], s[j] = s[j], s[i]
+        }</span>
+        <span class="cov0" title="0">s = append(s, "science")
+        return s</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package handlers
+
+import (
+        "html/template"
+        "net/http"
+
+        "github.com/tealwp/sac/internal/logger"
+)
+
+var homeTmpl *template.Template
+
+func init() <span class="cov0" title="0">{
+        var err error
+        homeTmpl, err = template.ParseFiles("templates/base.html", "templates/home.html")
+        if err != nil </span><span class="cov0" title="0">{
+                logger.ErrorLogger.Fatalf("Failed to parse home template: %v", err)
+        }</span>
+}
+
+func HomeHandler(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        logger.DebugLogger.Printf("HomeHandler called with path: %s", r.URL.Path)
+
+        w.Header().Set("Content-Type", "text/html")
+        if err := homeTmpl.ExecuteTemplate(w, "base", nil); err != nil </span><span class="cov0" title="0">{
+                logger.ErrorLogger.Printf("Error executing template: %v", err)
+                http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package logger
+
+import (
+        "log"
+        "os"
+)
+
+var (
+        DebugLogger *log.Logger
+        InfoLogger  *log.Logger
+        ErrorLogger *log.Logger
+)
+
+func init() <span class="cov0" title="0">{
+        DebugLogger = log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
+        InfoLogger = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+        ErrorLogger = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package middleware
+
+import (
+        "net/http"
+
+        "github.com/tealwp/sac/internal/logger"
+)
+
+func Logging(next http.Handler) http.Handler <span class="cov0" title="0">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                logger.InfoLogger.Printf("Request: %s %s", r.Method, r.URL.Path)
+                next.ServeHTTP(w, r)
+        }</span>)
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package parser
+
+import (
+        "github.com/tealwp/gofileparser"
+)
+
+func ParseGoFile(filePath string) (*gofileparser.GFP_GoFile, error) <span class="cov0" title="0">{
+        return gofileparser.ParseGoFile(filePath)
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package main
+
+import (
+        "github.com/tealwp/sac/cmd/server"
+        "github.com/tealwp/sac/internal/logger"
+)
+
+func main() <span class="cov0" title="0">{
+        if err := server.Serve(); err != nil </span><span class="cov0" title="0">{
+                logger.ErrorLogger.Fatalf("Server error: %v", err)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package atomic_structure
+
+// Atom represents the basic unit of matter
+type Atom struct {
+        AtomicNumber int
+        Element      string
+        Protons      int
+        Neutrons     int
+        Electrons    int
+}
+
+// NewAtom creates a new Atom instance
+func NewAtom(atomicNumber int, element string, neutrons int) *Atom <span class="cov0" title="0">{
+        return &amp;Atom{
+                AtomicNumber: atomicNumber,
+                Element:      element,
+                Protons:      atomicNumber,
+                Neutrons:     neutrons,
+                Electrons:    atomicNumber,
+        }
+}</span>
+
+// IsotopeOf checks if two atoms are isotopes of each other
+func (a *Atom) IsotopeOf(other *Atom) bool <span class="cov0" title="0">{
+        return a.AtomicNumber == other.AtomicNumber &amp;&amp; a.Neutrons != other.Neutrons
+}</span>
+
+// For more information on electron configuration, see the electron_configuration.go file in this package.
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package atomic_structure
+
+import "fmt"
+
+// ElectronConfiguration represents the arrangement of electrons in an atom
+type ElectronConfiguration struct {
+        Atom   *Atom
+        Shells []int
+}
+
+// DetermineElectronConfiguration calculates the electron configuration for an atom
+func DetermineElectronConfiguration(atom *Atom) *ElectronConfiguration <span class="cov0" title="0">{
+        // Simplified electron configuration calculation
+        shells := []int{2, 8, 18, 32}
+        config := &amp;ElectronConfiguration{Atom: atom}
+
+        remaining := atom.Electrons
+        for _, shellCapacity := range shells </span><span class="cov0" title="0">{
+                if remaining &gt; shellCapacity </span><span class="cov0" title="0">{
+                        config.Shells = append(config.Shells, shellCapacity)
+                        remaining -= shellCapacity
+                }</span> else<span class="cov0" title="0"> {
+                        config.Shells = append(config.Shells, remaining)
+                        break</span>
+                }
+        }
+
+        <span class="cov0" title="0">return config</span>
+}
+
+// String returns a string representation of the electron configuration
+func (ec *ElectronConfiguration) String() string <span class="cov0" title="0">{
+        return fmt.Sprintf("Electron Configuration for %s: %v", ec.Atom.Element, ec.Shells)
+}</span>
+
+// For more information on chemical bonding, see the bonding.go file in the chemical_bonding package.
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package chemical_bonding
+
+import (
+        "fmt"
+
+        "github.com/tealwp/sac/static/content/science/chemistry/atomic_structure"
+)
+
+// Bond represents a chemical bond between two atoms
+type Bond struct {
+        Atom1    *atomic_structure.Atom
+        Atom2    *atomic_structure.Atom
+        BondType string
+}
+
+// FormIonicBond creates an ionic bond between two atoms
+func FormIonicBond(metal, nonmetal *atomic_structure.Atom) *Bond <span class="cov0" title="0">{
+        return &amp;Bond{
+                Atom1:    metal,
+                Atom2:    nonmetal,
+                BondType: "Ionic",
+        }
+}</span>
+
+// FormCovalentBond creates a covalent bond between two atoms
+func FormCovalentBond(atom1, atom2 *atomic_structure.Atom) *Bond <span class="cov0" title="0">{
+        return &amp;Bond{
+                Atom1:    atom1,
+                Atom2:    atom2,
+                BondType: "Covalent",
+        }
+}</span>
+
+// String returns a string representation of the bond
+func (b *Bond) String() string <span class="cov0" title="0">{
+        return fmt.Sprintf("%s bond between %s and %s", b.BondType, b.Atom1.Element, b.Atom2.Element)
+}</span>
+
+// For more information on molecular geometry, see the geometry.go file in this package.
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package chemical_bonding
+
+import (
+        "fmt"
+
+        "github.com/tealwp/sac/static/content/science/chemistry/atomic_structure"
+)
+
+// MolecularGeometry represents the three-dimensional arrangement of atoms in a molecule
+type MolecularGeometry struct {
+        CentralAtom *atomic_structure.Atom
+        Shape       string
+        BondAngle   float64
+}
+
+// PredictGeometry predicts the molecular geometry based on the number of electron domains
+func PredictGeometry(centralAtom *atomic_structure.Atom, electronDomains int) *MolecularGeometry <span class="cov0" title="0">{
+        var shape string
+        var bondAngle float64
+
+        switch electronDomains </span>{
+        case 2:<span class="cov0" title="0">
+                shape = "Linear"
+                bondAngle = 180.0</span>
+        case 3:<span class="cov0" title="0">
+                shape = "Trigonal Planar"
+                bondAngle = 120.0</span>
+        case 4:<span class="cov0" title="0">
+                shape = "Tetrahedral"
+                bondAngle = 109.5</span>
+        case 5:<span class="cov0" title="0">
+                shape = "Trigonal Bipyramidal"
+                bondAngle = 90.0</span> // Simplified, actual angles vary
+        case 6:<span class="cov0" title="0">
+                shape = "Octahedral"
+                bondAngle = 90.0</span>
+        default:<span class="cov0" title="0">
+                shape = "Unknown"
+                bondAngle = 0.0</span>
+        }
+
+        <span class="cov0" title="0">return &amp;MolecularGeometry{
+                CentralAtom: centralAtom,
+                Shape:       shape,
+                BondAngle:   bondAngle,
+        }</span>
+}
+
+// String returns a string representation of the molecular geometry
+func (mg *MolecularGeometry) String() string <span class="cov0" title="0">{
+        return fmt.Sprintf("Molecular Geometry: %s, Bond Angle: %.1f°", mg.Shape, mg.BondAngle)
+}</span>
+
+// For more information on chemical reactions, see the reactions.go file in the chemical_reactions package.
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package chemical_reactions
+
+import (
+        "fmt"
+
+        "github.com/tealwp/sac/static/content/science/chemistry/chemical_bonding"
+)
+
+// Reaction represents a chemical reaction
+type Reaction struct {
+        Reactants []*chemical_bonding.Bond
+        Products  []*chemical_bonding.Bond
+        Type      string
+}
+
+// NewReaction creates a new chemical reaction
+func NewReaction(reactants, products []*chemical_bonding.Bond, reactionType string) *Reaction <span class="cov0" title="0">{
+        return &amp;Reaction{
+                Reactants: reactants,
+                Products:  products,
+                Type:      reactionType,
+        }
+}</span>
+
+// BalanceReaction attempts to balance the chemical reaction
+func (r *Reaction) BalanceReaction() error <span class="cov0" title="0">{
+        // Simplified balancing logic
+        // In a real implementation, this would be much more complex
+        if len(r.Reactants) == len(r.Products) </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+        <span class="cov0" title="0">return fmt.Errorf("unable to balance reaction")</span>
+}
+
+// String returns a string representation of the reaction
+func (r *Reaction) String() string <span class="cov0" title="0">{
+        reactants := ""
+        for _, bond := range r.Reactants </span><span class="cov0" title="0">{
+                reactants += bond.String() + " + "
+        }</span>
+        <span class="cov0" title="0">reactants = reactants[:len(reactants)-3] // Remove last " + "
+
+        products := ""
+        for _, bond := range r.Products </span><span class="cov0" title="0">{
+                products += bond.String() + " + "
+        }</span>
+        <span class="cov0" title="0">products = products[:len(products)-3] // Remove last " + "
+
+        return fmt.Sprintf("%s -&gt; %s (%s reaction)", reactants, products, r.Type)</span>
+}
+
+// For more information on reaction kinetics, see the kinetics.go file in this package.
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package watercycle
+
+import "fmt"
+
+// WaterParticle represents a particle of water in the water cycle
+type WaterParticle struct {
+        State    string // Can be "liquid", "solid", or "gas"
+        Location string
+}
+
+// Evaporate changes the state of water from liquid to gas
+func (w *WaterParticle) Evaporate() <span class="cov0" title="0">{
+        if w.State == "liquid" </span><span class="cov0" title="0">{
+                w.State = "gas"
+                w.Location = "atmosphere"
+                fmt.Println("Water evaporated into the atmosphere")
+        }</span>
+}
+
+// Condense changes the state of water from gas to liquid
+func (w *WaterParticle) Condense() <span class="cov0" title="0">{
+        if w.State == "gas" </span><span class="cov0" title="0">{
+                w.State = "liquid"
+                w.Location = "cloud"
+                fmt.Println("Water vapor condensed into a cloud")
+        }</span>
+}
+
+// Precipitate moves water from a cloud to the ground
+func (w *WaterParticle) Precipitate() <span class="cov0" title="0">{
+        if w.State == "liquid" &amp;&amp; w.Location == "cloud" </span><span class="cov0" title="0">{
+                w.Location = "ground"
+                fmt.Println("Water precipitated to the ground")
+        }</span>
+}
+
+// SimulateWaterCycle runs a simple simulation of the water cycle
+func SimulateWaterCycle() <span class="cov0" title="0">{
+        water := WaterParticle{State: "liquid", Location: "ocean"}
+
+        fmt.Println("Starting water cycle simulation:")
+        fmt.Printf("Initial state: %+v\n", water)
+
+        water.Evaporate()
+        water.Condense()
+        water.Precipitate()
+
+        fmt.Printf("Final state: %+v\n", water)
+}</span>
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">// Package testsubject is a sample package for testing the Go file parser.
+package testsubject
+
+import (
+        "fmt"
+        "strings"
+)
+
+// TestConstant is a sample constant
+const TestConstant = "This is a test constant"
+
+// AnotherConstant is another sample constant with a type
+const AnotherConstant string = "This is another test constant"
+
+// TestVariable is a sample variable
+var TestVariable int
+
+// AnotherVariable is another sample variable with an initial value
+var AnotherVariable = "This is a test variable"
+
+// TestStruct is a sample struct
+type TestStruct struct {
+        Field1 string
+        Field2 int
+}
+
+// TestInterface is a sample interface
+type TestInterface interface {
+        Method1() string
+        Method2(int) error
+}
+
+// TestFunction is a sample function
+func TestFunction(param1 string, param2 int) (string, error) <span class="cov0" title="0">{
+        return fmt.Sprintf("Param1: %s, Param2: %d", param1, param2), nil
+}</span>
+
+// TestMethod is a sample method for TestStruct
+func (t *TestStruct) TestMethod(input string) string <span class="cov0" title="0">{
+        return strings.ToUpper(input)
+}</span>
+
+// This is a standalone comment that should be captured
+
+/*
+This is a multi-line comment
+that should also be captured
+*/
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

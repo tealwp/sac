@@ -1,16 +1,8 @@
 {{define "method"}}
 <li class="method-item">
     <div class="method-box">
-        {{if .Doc}}
-        <pre class="method-doc">{{.Doc}}</pre>
-        {{end}}
-        <pre class="method-code"><span class="keyword">func</span> ({{.Receiver}}) <strong>{{.Name}}</strong>(
-{{- range $i, $param := .Parameters -}}
-{{- if $i}}, {{end -}}
-{{.Name}} {{.Type -}}
-{{- end -}}) {{.ReturnType}}
-{{.Body}}
-</pre>
+        <pre class="doc">{{.Doc}}</pre>
+        <pre class="line-numbers"><code class="language-go">func ({{.Receiver}}) {{.Name}}({{.Parameters}}) {{.ReturnType}} {{.Body}}</code></pre>
         <span class="line-number">Line: {{.Line}}</span>
     </div>
 </li>

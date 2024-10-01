@@ -1,8 +1,6 @@
 {{define "type"}}
 <li>
-    <strong>{{.Name}}</strong>
-    {{if .Doc}}<pre>{{.Doc}}</pre>{{end}}
-    <pre>{{.Def}}</pre>
-    <span class="line-number">(Line: {{.Line}})</span>
+    {{if .Doc }}<pre class="doc">{{.Doc}}</pre>{{end}}
+    <pre class="line-numbers"><code class="language-go">type {{.Name}} {{.Def}}</code></pre>
 </li>
 {{end}}

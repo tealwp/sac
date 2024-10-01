@@ -1,9 +1,7 @@
 {{define "constant"}}
 <li>
-    <strong>{{.Name}}</strong>
-    {{if .Type}}: {{.Type}}{{end}}
-    {{if .Value}} = {{.Value}}{{end}}
-    {{if .Doc}}<pre>{{.Doc}}</pre>{{end}}
-    <span class="line-number">(Line: {{.Line}})</span>
+    {{if .Doc }}<pre class="doc">{{.Doc}}</pre>{{end}}
+    <pre class="line-numbers"><code class="language-go">const {{.Name}}{{ if .Type}}: {{.Type}}{{end}} {{ if .Value}}= {{.Value}}{{end}}</code></pre>
+    <span class="line-number">Line: {{.Line}}</span>
 </li>
 {{end}}

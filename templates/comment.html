@@ -1,6 +1,6 @@
 {{define "comment"}}
 <li>
-    <pre>{{.Text}}</pre>
-    <span class="line-number">(Line: {{.Line}})</span>
+    <pre class="line-numbers"><code class="language-go">{{.Text}}</code></pre>
+    <span class="line-number">Line: {{.Line}}</span>
 </li>
 {{end}}

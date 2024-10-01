@@ -38,9 +38,7 @@
         <h2 id="imports">Imports</h2>
         <ul class="list-unstyled">
         {{range .File.Imports}}
-          <li>
-            <pre class="line-numbers"><code class="language-go">import {{.Path}}</code></pre>
-          </li>
+          {{template "import" .}}
         {{end}}
         </ul>
       </section>
@@ -52,8 +50,7 @@
         <ul class="list-unstyled">
         {{range .File.Constants}}
           <li>
-            {{if .Doc }}<pre class="doc">{{.Doc}}</pre>{{end}}
-            <pre class="line-numbers"><code class="language-go">const {{.Name}}{{ if .Type}}: {{.Type}}{{end}} {{ if .Value}}= {{.Value}}{{end}}</code></pre>
+            {{template "constant" .}}
           </li>
         {{end}}
         </ul>
@@ -65,10 +62,7 @@
         <h2 id="variables">Variables</h2>
         <ul class="list-unstyled">
         {{range .File.Variables}}
-          <li>
-            {{if .Doc }}<pre class="doc">{{.Doc}}</pre>{{end}}
-            <pre class="line-numbers"><code class="language-go">var {{.Name}}{{ if .Type}}: {{.Type}}{{end}} {{ if .Value}}= {{.Value}}{{end}}</code></pre>
-          </li>
+          {{template "variable" .}}
         {{end}}
         </ul>
       </section>
@@ -79,10 +73,7 @@
         <h2 id="types">Types</h2>
         <ul class="list-unstyled">
         {{range .File.Types}}
-          <li>
-            {{if .Doc }}<pre class="doc">{{.Doc}}</pre>{{end}}
-            <pre class="line-numbers"><code class="language-go">type {{.Name}} {{.Def}}</code></pre>
-          </li>
+          {{template "type" .}}
         {{end}}
         </ul>
       </section>
@@ -93,12 +84,7 @@
         <h2 id="functions">Functions</h2>
         <ul class="list-unstyled">
         {{range .File.Functions}}
-          <li class="function-item">
-            <div class="function-box">
-              <pre class="doc">{{.Doc}}</pre>
-              <pre class="line-numbers"><code class="language-go">func {{.Name}}({{.Parameters}}) {{.ReturnType}} {{.Body}}</code></pre>
-            </div>
-          </li>
+          {{template "function" .}}
         {{end}}
         </ul>
       </section>
@@ -109,10 +95,7 @@
         <h2 id="methods">Methods</h2>
         <ul class="list-unstyled">
         {{range .File.Methods}}
-          <li>
-            <pre class="doc">{{.Doc}}</pre>
-            <pre class="line-numbers"><code class="language-go">func ({{.Receiver}}) {{.Name}}({{.Parameters}}) {{.ReturnType}} {{.Body}}</code></pre>
-          </li>
+          {{template "method" .}}
         {{end}}
         </ul>
       </section>
@@ -123,16 +106,7 @@
         <h2 id="interfaces">Interfaces</h2>
         <ul class="list-unstyled">
         {{range .File.Interfaces}}
-          <li>
-            <pre class="doc">{{.Doc}}</pre>
-            <code class="language-go">
-                type {{.Name}} interface {
-                {{range .Methods}}
-                    {{.Name}}({{.Parameters}}) {{.ReturnType}}
-                {{end}}
-                }
-            </code>
-          </li>
+          {{template "interface" .}}
         {{end}}
         </ul>
       </section>
@@ -143,9 +117,7 @@
         <h2 id="comments">Comments</h2>
         <ul class="list-unstyled">
         {{range .File.Comments}}
-          <li>
-            <pre class="line-numbers"><code class="language-go">{{.Text}}</code></pre>
-          </li>
+          {{template "comment" .}}
         {{end}}
         </ul>
       </section>

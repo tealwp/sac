@@ -1,17 +1,9 @@
 {{define "function"}}
 <li class="function-item">
     <div class="function-box">
-        {{if .Doc}}
-        <pre class="function-doc">{{.Doc}}</pre>
-        {{end}}
-        <pre class="function-code"><span class="keyword">func</span> <strong>{{.Name}}</strong>(
-        {{- range $i, $param := .Parameters -}}
-            {{- if $i}}, {{end -}}
-            {{.Name}} {{.Type -}}
-        {{- end -}}) {{.ReturnType}}
-    {{.Body}}
-</pre>
-        <span class="line-number">Line: {{.Line}}</span>
+      <pre class="doc">{{.Doc}}</pre>
+      <pre class="line-numbers"><code class="language-go">func {{.Name}}({{.Parameters}}) {{.ReturnType}} {{.Body}}</code></pre>
+      <span class="line-number">Line: {{.Line}}</span>
     </div>
 </li>
 {{end}}
