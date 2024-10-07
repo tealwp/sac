@@ -2,5 +2,6 @@
 <li>
     {{if .Doc }}<pre class="doc">{{.Doc}}</pre>{{end}}
     <pre class="line-numbers"><code class="language-go">type {{.Name}} {{.Def}}</code></pre>
+    <span class="line-number">Line: {{.Line}}</span>
 </li>
 {{end}}

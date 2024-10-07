@@ -2,8 +2,8 @@
 <li class="method-item">
     <div class="method-box">
         <pre class="doc">{{.Doc}}</pre>
-        <pre class="line-numbers"><code class="language-go">func ({{.Receiver}}) {{.Name}}({{.Parameters}}) {{.ReturnType}} {{.Body}}</code></pre>
-        <span class="line-number">Line: {{.Line}}</span>
+        <pre class="line-numbers"><code class="language-go">func ({{.Receiver}}) {{.Name}}({{template "parameter" .Parameters}}) {{.ReturnType}} {{formatCodeBlock .Body}}</code></pre>
     </div>
+    <span class="line-number">Line: {{.Line}}</span>
 </li>
 {{end}}

@@ -82,8 +82,7 @@ pre,
     text-align: right;
     color: #6a737d;
     font-size: 0.85em;
-    padding: 0.5em 1em;
-    border-top: 1px solid #e1e4e8;
+    padding: 0 1em 0 0;
 }
 
 /* Lists */
@@ -125,14 +124,6 @@ li {
     overflow: hidden;
     background-color: #f6f8fa;
     margin-bottom: 1rem;
-}
-
-.method-box {
-    border-left: 3px solid #28a745;
-}
-
-.function-box {
-    border-left: 3px solid #0366d6;
 }
 
 .doc {
@@ -189,8 +180,8 @@ li {
     list-style: none;
 }
 
-.flex-column {
-    flex-direction: column !important;
+.row {
+    flex-direction: row !important;
 }
 
 .nav-link {

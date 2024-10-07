@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -17,7 +19,10 @@ var contentTmpl *template.Template
 
 func init() {
 	var err error
-	contentTmpl, err = template.ParseFiles("templates/base.html", "templates/content.html", "templates/import.html", "templates/constant.html", "templates/variable.html", "templates/type.html", "templates/function.html", "templates/method.html", "templates/interface.html", "templates/comment.html")
+	tmpl := template.New("base").Funcs(template.FuncMap{
+		"formatCodeBlock": FormatCodeBlock,
+	})
+	contentTmpl, err = tmpl.ParseFiles("templates/base.html", "templates/content.html", "templates/imports.html", "templates/constant.html", "templates/variable.html", "templates/type.html", "templates/function.html", "templates/method.html", "templates/interface.html", "templates/comments.html", "templates/parameter.html")
 	if err != nil {
 		logger.ErrorLogger.Fatalf("Failed to parse content template: %v", err)
 	}
@@ -27,45 +32,77 @@ func init() {
 func ContentHandler(w http.ResponseWriter, r *http.Request) {
 	logger.DebugLogger.Printf("ContentHandler called with path: %s", r.URL.Path)
 
-	// Remove the "/science/" prefix
-	urlPath := strings.TrimPrefix(r.URL.Path, "/science/")
-
 	// Construct the file path using forward slashes
-	filePath := path.Join("static", "content", "science", urlPath+".go")
+	filePath := path.Join("static", "content", r.URL.Path)
 
 	// Convert to OS-specific path
-	osFilePath := filepath.FromSlash(filePath)
+	osBaseDir := filepath.FromSlash(getBasePath(filePath))
+	osDirPath := filepath.FromSlash(filePath)
+	goOSFilePath := filepath.FromSlash(filePath + ".go")
 
-	logger.DebugLogger.Printf("Attempting to read file: %s", osFilePath)
+	_, fiErr := os.Stat(goOSFilePath)
+	_, dirErr := os.Stat(osDirPath)
+	isFile := !os.IsNotExist(fiErr)
+	isDir := !os.IsNotExist(dirErr)
 
-	// Check if the file exists
-	if _, err := os.Stat(osFilePath); os.IsNotExist(err) {
-		logger.ErrorLogger.Printf("File not found: %s", osFilePath)
-		http.Error(w, "404 Not Found", http.StatusNotFound)
+	var nestedDirs, nestedFiles []string
+	var err error
+
+	
+	if !isFile && !isDir { // no file, no dir ==> error
+		logger.ErrorLogger.Printf("could not match path: %s", osDirPath)
+		http.Error(w, "Path Not Found", http.StatusNotFound)
 		return
+	} else if isDir && isFile { // is file, is dir ==> add nested content to render
+		// get other paths
+		nestedDirs, nestedFiles, err = getNestedContent(osDirPath)
+		if err != nil {
+			logger.ErrorLogger.Printf("could not get nested content from: %s", osDirPath)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+	} else if isDir && !isFile { // no file, is dir ==> render other nav template with nested content
+		// get other paths
+		nestedDirs, nestedFiles, err = getNestedContent(osDirPath)
+		if err != nil {
+			logger.ErrorLogger.Printf("could not get nested content from: %s", osDirPath)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		// render directory nav template
+	} else if !isDir && isFile { // is file, no dir ==> get all same-level content and directories
+		// get other paths
+		nestedDirs, nestedFiles, err = getNestedContent(osBaseDir)
+		if err != nil {
+			logger.ErrorLogger.Printf("could not get nested content from: %s", osBaseDir)
+		}
 	}
 
 	// Extract the nested path
-	pathParts := strings.Split(urlPath, "/")
+	pathParts := strings.Split(r.URL.Path, "/")
 	nestedPath := strings.Join(reverseSlice(pathParts[:len(pathParts)-1]), " < ")
 
-	parsedFile, err := parser.ParseGoFile(osFilePath)
+	parsedFile, err := parser.ParseGoFile(goOSFilePath)
 	if err != nil {
 		logger.ErrorLogger.Printf("Error parsing file: %v", err)
 		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	logger.InfoLogger.Printf("File parsed successfully: %s", osFilePath)
+	logger.InfoLogger.Printf("File parsed successfully: %s", goOSFilePath)
 
 	// Create a struct to hold both the parsed file and the nested path
 	data := struct {
-		File       *gofileparser.GFP_GoFile
-		NestedPath string
-		Package    string
+		File       *gofileparser.GFPGoFile
+		FullPath string
+		Title      string
+		NestedDirs []string
+		NestedContent []string
 	}{
 		File:       parsedFile,
-		NestedPath: nestedPath,
-		Package:    parsedFile.Package, // Assuming the package name is stored in a 'Package' field
+		FullPath: nestedPath,
+		Title:      parsedFile.Package,
+		NestedDirs: nestedDirs,
+		NestedContent: nestedFiles,
 	}
 
 	w.Header().Set("Content-Type", "text/html")
@@ -82,6 +119,34 @@ func reverseSlice(s []string) []string {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
 		s[i], s[j] = s[j], s[i]
 	}
-	s = append(s, "science")
 	return s
+}
+
+func getBasePath(filePath string) string {
+	u, err := url.Parse(filePath)
+	if err != nil {
+			return ""
+	}
+
+	return filepath.Dir(u.Path)
+}
+
+func getNestedContent(dirPath string) ([]string, []string, error) {
+	dirs := []string{}
+	files := []string{}
+	entries, err := os.ReadDir(dirPath)
+	if err != nil {
+		fmt.Println("Error reading directory:", err)
+		return nil, nil, err
+	}
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			dirs = append(dirs, entry.Name())
+		} else {
+			files = append(files, entry.Name())
+		}
+	}
+
+	return dirs, files, nil
 }

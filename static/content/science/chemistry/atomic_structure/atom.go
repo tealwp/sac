@@ -9,7 +9,7 @@ type Atom struct {
 	Electrons    int
 }
 
-// NewAtom creates a new Atom instance
+// NewAtom creates a new Atom instance. Doesn't take in number of electrons or protons because they should be equal to the atom ic number, if not an ion.
 func NewAtom(atomicNumber int, element string, neutrons int) *Atom {
 	return &Atom{
 		AtomicNumber: atomicNumber,

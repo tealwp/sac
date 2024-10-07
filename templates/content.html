@@ -1,29 +1,29 @@
 {{ template "base" . }}
 
-{{define "title"}}{{.Package}} - SAC{{end}}
+{{define "title"}}{{.Title}} - SAC{{end}}
 
 {{define "content"}}
 <main role="main" class="container">
-  <div class="row">
-    <div class="col-md-3">
-      <nav class="section-nav sticky-top" role="navigation" aria-label="Page sections">
-        <ul class="nav flex-column">
-          {{if .File.FileDoc}}<li class="nav-item"><a class="nav-link" href="#file-doc">File Documentation</a></li>{{end}}
-          {{if .File.Imports}}<li class="nav-item"><a class="nav-link" href="#imports">Imports</a></li>{{end}}
-          {{if .File.Constants}}<li class="nav-item"><a class="nav-link" href="#constants">Constants</a></li>{{end}}
-          {{if .File.Variables}}<li class="nav-item"><a class="nav-link" href="#variables">Variables</a></li>{{end}}
-          {{if .File.Types}}<li class="nav-item"><a class="nav-link" href="#types">Types</a></li>{{end}}
-          {{if .File.Functions}}<li class="nav-item"><a class="nav-link" href="#functions">Functions</a></li>{{end}}
-          {{if .File.Methods}}<li class="nav-item"><a class="nav-link" href="#methods">Methods</a></li>{{end}}
-          {{if .File.Interfaces}}<li class="nav-item"><a class="nav-link" href="#interfaces">Interfaces</a></li>{{end}}
-          {{if .File.Comments}}<li class="nav-item"><a class="nav-link" href="#comments">Comments</a></li>{{end}}
-        </ul>
-      </nav>
-    </div>
-    <div class="col-md-9">
+  <div class="flex-row">
+    <nav class="sticky-top" role="navigation" aria-label="Page sections">
+      <ul class="nav flex-row">
+        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+        {{if .File.FileDoc}}<li class="nav-item"><a class="nav-link" href="#file-doc">File Documentation</a></li>{{end}}
+        {{if .File.Imports}}<li class="nav-item"><a class="nav-link" href="#imports">Imports</a></li>{{end}}
+        {{if .File.Constants}}<li class="nav-item"><a class="nav-link" href="#constants">Constants</a></li>{{end}}
+        {{if .File.Variables}}<li class="nav-item"><a class="nav-link" href="#variables">Variables</a></li>{{end}}
+        {{if .File.Types}}<li class="nav-item"><a class="nav-link" href="#types">Types</a></li>{{end}}
+        {{if .File.Functions}}<li class="nav-item"><a class="nav-link" href="#functions">Functions</a></li>{{end}}
+        {{if .File.Methods}}<li class="nav-item"><a class="nav-link" href="#methods">Methods</a></li>{{end}}
+        {{if .File.Interfaces}}<li class="nav-item"><a class="nav-link" href="#interfaces">Interfaces</a></li>{{end}}
+        {{if .File.Comments}}<li class="nav-item"><a class="nav-link" href="#comments">Comments</a></li>{{end}}
+        <li class="nav-item"><a class="nav-link" href="#top">Top</a></li>
+      </ul>
+    </nav>
+    <div>
       <div class="package-header">
-        <h1>Package: {{.Package}}</h1>
-        <p class="nested-path">{{.NestedPath}}</p>
+        <h1>Package: {{.File.Package}}</h1>
+        <p class="nested-path">{{.FullPath}}</p>
       </div>
 
       {{if .File.FileDoc}}
@@ -37,9 +37,7 @@
       <section class="section" aria-labelledby="imports">
         <h2 id="imports">Imports</h2>
         <ul class="list-unstyled">
-        {{range .File.Imports}}
-          {{template "import" .}}
-        {{end}}
+        {{template "imports" .File.Imports}}
         </ul>
       </section>
       {{end}}
@@ -115,11 +113,10 @@
       {{if .File.Comments}}
       <section class="section" aria-labelledby="comments">
         <h2 id="comments">Comments</h2>
-        <ul class="list-unstyled">
-        {{range .File.Comments}}
-          {{template "comment" .}}
-        {{end}}
-        </ul>
+        <details class="file-content-details">
+          <summary>Click to view all code comments</summary>
+          {{template "comments" .File.Comments}}
+        </details>
       </section>
       {{end}}
 

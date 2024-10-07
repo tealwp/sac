@@ -1,9 +1,9 @@
 {{define "function"}}
 <li class="function-item">
     <div class="function-box">
-      <pre class="doc">{{.Doc}}</pre>
-      <pre class="line-numbers"><code class="language-go">func {{.Name}}({{.Parameters}}) {{.ReturnType}} {{.Body}}</code></pre>
-      <span class="line-number">Line: {{.Line}}</span>
+      {{if .Doc }}<pre class="doc">{{.Doc}}</pre>{{end}}
+      <pre class="line-numbers"><code class="language-go">func {{.Name}}({{template "parameter" .Parameters}}) {{.ReturnType}} {{formatCodeBlock .Body}}</code></pre>
     </div>
+    <span class="line-number">Line: {{.Line}}</span>
 </li>
 {{end}}
