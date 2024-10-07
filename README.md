@@ -59,9 +59,8 @@ Once the server is running, you can access the following pages:
 
 ## Future Plans
 
-- Add more scientific topics
-- Add more test subjects
+- Add more content files (currently all AI generated for testing purposes, and haven't been proofed at all)
 - Add `Output()` function to every content file that demonstrates the concept
     = this is weird since we are not executing the code in the content files.....we may need to run and store the outputs in a static file on build? Maybe another sideloaded package to handle this?
-- Feature to display nested content paths when navigating to a non-content directory eg. /science/ should render a list of accessible paths underneat, and a list of .go content files nested directly in this directory
+- Feature to display nested content paths when navigating to a non-content directory eg. /science/ should render a list of accessible paths underneath, and a list of .go content files nested directly in this directory
 
