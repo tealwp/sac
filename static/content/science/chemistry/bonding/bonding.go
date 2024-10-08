@@ -1,20 +1,20 @@
-package chemical_bonding
+package bonding
 
 import (
 	"fmt"
 
-	"github.com/tealwp/sac/static/content/science/chemistry/atomic_structure"
+	"github.com/tealwp/sac/static/content/science/chemistry/atoms"
 )
 
 // Bond represents a chemical bond between two atoms
 type Bond struct {
-	Atom1    *atomic_structure.Atom
-	Atom2    *atomic_structure.Atom
+	Atom1    *atoms.Atom
+	Atom2    *atoms.Atom
 	BondType string
 }
 
 // FormIonicBond creates an ionic bond between two atoms
-func FormIonicBond(metal, nonmetal *atomic_structure.Atom) *Bond {
+func FormIonicBond(metal, nonmetal *atoms.Atom) *Bond {
 	return &Bond{
 		Atom1:    metal,
 		Atom2:    nonmetal,
@@ -23,7 +23,7 @@ func FormIonicBond(metal, nonmetal *atomic_structure.Atom) *Bond {
 }
 
 // FormCovalentBond creates a covalent bond between two atoms
-func FormCovalentBond(atom1, atom2 *atomic_structure.Atom) *Bond {
+func FormCovalentBond(atom1, atom2 *atoms.Atom) *Bond {
 	return &Bond{
 		Atom1:    atom1,
 		Atom2:    atom2,

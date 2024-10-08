@@ -1,20 +1,20 @@
-package chemical_bonding
+package bonding
 
 import (
 	"fmt"
 
-	"github.com/tealwp/sac/static/content/science/chemistry/atomic_structure"
+	"github.com/tealwp/sac/static/content/science/chemistry/atoms"
 )
 
 // MolecularGeometry represents the three-dimensional arrangement of atoms in a molecule
 type MolecularGeometry struct {
-	CentralAtom *atomic_structure.Atom
+	CentralAtom *atoms.Atom
 	Shape       string
 	BondAngle   float64
 }
 
 // PredictGeometry predicts the molecular geometry based on the number of electron domains
-func PredictGeometry(centralAtom *atomic_structure.Atom, electronDomains int) *MolecularGeometry {
+func PredictGeometry(centralAtom *atoms.Atom, electronDomains int) *MolecularGeometry {
 	var shape string
 	var bondAngle float64
 

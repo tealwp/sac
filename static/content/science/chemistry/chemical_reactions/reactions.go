@@ -3,18 +3,18 @@ package chemical_reactions
 import (
 	"fmt"
 
-	"github.com/tealwp/sac/static/content/science/chemistry/chemical_bonding"
+	"github.com/tealwp/sac/static/content/science/chemistry/bonding"
 )
 
 // Reaction represents a chemical reaction
 type Reaction struct {
-	Reactants []*chemical_bonding.Bond
-	Products  []*chemical_bonding.Bond
+	Reactants []*bonding.Bond
+	Products  []*bonding.Bond
 	Type      string
 }
 
 // NewReaction creates a new chemical reaction
-func NewReaction(reactants, products []*chemical_bonding.Bond, reactionType string) *Reaction {
+func NewReaction(reactants, products []*bonding.Bond, reactionType string) *Reaction {
 	return &Reaction{
 		Reactants: reactants,
 		Products:  products,
